@@ -3,7 +3,7 @@ from typing import Union
 
 from ..interface.signal import SignalProxyR as SignalProxyRInterface
 from ..interface.signal import SignalProxyRW as SignalProxyRWInterface
-from ..interface.view import View
+from ..interface.view import ViewR
 
 
 class SignalProxyR(SignalProxyRInterface):
@@ -11,7 +11,7 @@ class SignalProxyR(SignalProxyRInterface):
 
     a much ado about closures
     """
-    def __init__(self, *, proxied_object: View, name: Union[str, None], id_: str):
+    def __init__(self, *, proxied_object: ViewR, name: Union[str, None], id_: str):
         self.name = name
         self.proxied_object = proxied_object
         self.id_ = id_

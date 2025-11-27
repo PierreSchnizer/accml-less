@@ -1,7 +1,7 @@
 # accml-less: A perhaps too rich interface to the Accelerator middle layer
 
 [accml](https://github.com/python-accelerator-middle-layer/accml) 
-is based on interacting with an accelerator twin or machine based
+is based on interacting with an accelerator, twin or machine based
 on structured messages. Its core interaction with the machine is
 a command or measurement execution engine.
 

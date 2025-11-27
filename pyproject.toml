@@ -22,4 +22,5 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = ">=3.7"
-accml = ">=0.1.0a1"
+accml = ">=0.2.0a1"
+lat2db = "*"

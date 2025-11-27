@@ -1,15 +1,15 @@
 from typing import Sequence, Union
 
-from ..errors import AttributeUnknownToProxiedObject
+from ...errors import AttributeUnknownToProxiedObject
 from ..interface.signal import SignalProxyR as SignalProxyRInterface
 from ..interface.signal import SignalProxyRW as SignalProxyRWInterface
 from ..interface.view_with_attributes import ViewWithAttributesProxy as ViewWithAttributesProxyInterface
-from ..interface.view import View
+from ..interface.view import ViewR
 from .signal_proxy import SignalProxyR, SignalProxyRW
 
 
 class ViewWithAttributesProxy(ViewWithAttributesProxyInterface):
-    def __init__(self, *, proxid_object: View, name: Union[str, None] = None):
+    def __init__(self, *, proxid_object: ViewR, name: Union[str, None] = None):
         self._proxied_obj = proxid_object
         self._name = name
 

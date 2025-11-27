@@ -1,8 +1,19 @@
+"""
+Todo:
+    review if the interface (protocols) of ophyd async or bluesky should
+    be used directly?
+
+    in particular:
+        * ReadAble
+        * Triggerable
+        * Settable
+
+"""
 from abc import ABCMeta, abstractmethod
 from typing import Sequence
 
 
-class View(metaclass=ABCMeta):
+class ViewR(metaclass=ABCMeta):
     """provide access to the view similar to ophyd-async Standard Readable and Settable
 
     Todo:
@@ -23,7 +34,7 @@ class View(metaclass=ABCMeta):
 
 
     @abstractmethod
-    async def trigger(self, id_: str) -> object:
+    async def trigger(self, id_: str):
         """get the value associated with a certain property
 
         Following ophyd async design: separate waiting that
@@ -46,6 +57,7 @@ class View(metaclass=ABCMeta):
         """
         raise NotImplementedError("use derived class instead")
 
+class ViewRW(metaclass=ABCMeta):
     @abstractmethod
     async def set(self, id_: str, value: object) -> None:
         """set the value of the property

@@ -1,6 +1,7 @@
 from abc import abstractmethod, ABCMeta
+from typing import Union
 
-from ..interface.view import View
+from .device_view_facade import DeviceViewRFacadeBase, DeviceViewRWFacadeBase
 
 
 class DeviceViewFactory(metaclass=ABCMeta):
@@ -9,7 +10,7 @@ class DeviceViewFactory(metaclass=ABCMeta):
       Is the list of known or possible devices necessary?
     """
     @abstractmethod
-    def get(self, dev_name: str) -> View:
+    def get(self, dev_name: str) -> Union[DeviceViewRFacadeBase, DeviceViewRWFacadeBase]:
         """Returns a  "managed" device view.
         """
         raise NotImplementedError("use derived class instead")

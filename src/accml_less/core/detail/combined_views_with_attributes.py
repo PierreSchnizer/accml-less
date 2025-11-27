@@ -1,7 +1,7 @@
 from typing import Sequence, Union
 
 from ..interface.combined_views import CombinedViews, StandardViews
-from ..interface.view import View
+from ..interface.view import ViewR
 
 
 class CombinedViewWithAttributes(CombinedViews):
@@ -14,7 +14,7 @@ class CombinedViewWithAttributes(CombinedViews):
             return self.name
         return f"{self.proxied_object.get_name()}-wth-attrs"
 
-    def get(self, view: str) -> View:
+    def get(self, view: str) -> ViewR:
         return self.proxied_object.get(view)
 
     def get_view_names(self) -> Sequence[str]:

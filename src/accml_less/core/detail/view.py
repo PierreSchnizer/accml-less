@@ -1,6 +1,6 @@
 from typing import Sequence
 
-from ..interface.view import View as ViewInterface
+from ..interface.view import ViewR as ViewInterface
 
 
 class View(ViewInterface):

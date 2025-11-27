@@ -1,8 +1,9 @@
 from abc import ABCMeta, abstractmethod
 from enum import Enum
-from typing import Sequence
+from typing import Sequence, Union
 
-from .view import View
+from .device_view_facade import DeviceViewRWFacadeBase, DeviceViewRFacadeBase
+from .view import ViewR, ViewRW
 
 
 class StandardViews(Enum):
@@ -11,8 +12,13 @@ class StandardViews(Enum):
 
 
 class CombinedViews(metaclass=ABCMeta):
+    """
+    Todo:
+        reduce the number of types get returns or
+        make it more Liskov like
+    """
     @abstractmethod
-    def get(self, view: str) -> View:
+    def get(self, view: str) -> Union[ViewR, ViewRW, DeviceViewRFacadeBase, DeviceViewRWFacadeBase]:
         """get a view.
 
         Todo:

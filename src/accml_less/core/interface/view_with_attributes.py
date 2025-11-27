@@ -2,10 +2,10 @@ from abc import ABCMeta, abstractmethod
 from typing import Sequence, Union
 
 from .signal import SignalProxyR, SignalProxyRW
-from .view import View
+from .view import ViewR
 
 
-class ViewWithAttributesProxy(View, metaclass=ABCMeta):
+class ViewWithAttributesProxy(ViewR, metaclass=ABCMeta):
     """
     Todo:
         should it be rather a protocil

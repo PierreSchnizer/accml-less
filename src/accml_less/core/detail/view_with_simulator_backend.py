@@ -1,11 +1,19 @@
-import logging
-from typing import Sequence, Mapping
+"""
 
+Todo:
+    Refactor intermixing translation and read / write
+"""
+import logging
+from typing import Sequence
+
+from .conversion_capsule_utils import get_conversion_capsule_for_device_property
 from ..interface.conversion_capsule import ConversionCapsuleBase
 from ..interface.simulator_accelerator.accelerator_simulator import AcceleratorSimulatorInterface
 from ..interface.view import ViewR as ViewInterface
 
 logger = logging.getLogger("accml")
+
+
 
 
 class ViewWithSimulatorBackend(ViewInterface):
@@ -46,23 +54,21 @@ class ViewWithSimulatorBackend(ViewInterface):
     def get_properties(self) -> Sequence[str]:
         return  self._properties
 
+
     def _get_conversion_capsule(self, id_: str) -> ConversionCapsuleBase:
         """
         Todo:
             rename method
-            consider to make it a function
             need to address which direction is searched
         """
         assert self.conversion_capsules is not None
-        for capsule in self.conversion_capsules:
-            #: todo yet an other check for the device name
-            conv_id = capsule.get_conversion_id()
-            if conv_id.device_property_id.property == id_:
-                break
-        else:
-            raise AssertionError(f"I did not find a translation object for {id_}")
+        capsule = get_conversion_capsule_for_device_property(
+            capsules=self.conversion_capsules, device_property=id_
+        )
+        if capsule is None:
+            raise AssertionError(f"I expected to find a capsule for {id_}")
 
-        elem_name = conv_id.lattice_property_id.element_name
+        elem_name = capsule.get_conversion_id().lattice_property_id.element_name
         assert elem_name == self.element_name, f"Conversion working on elem {elem_name}, but I am only handling {self.element_name}"
 
         return capsule

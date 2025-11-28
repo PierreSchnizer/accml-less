@@ -1,12 +1,18 @@
 # Design of accml-less 
 
-If you’ve ever worked with a real accelerator, you know the first thing you meet is not an elegant abstraction or a well-behaved mathematical object.
-You meet **devices** — power converters that sulk when you push them too fast, RF amplifiers that have opinions about stability, diagnostics that only tell the truth when they feel like it.
-And if you’re coming from the MATLAB Middle Layer (MML), you’re used to poking these devices directly: “Give me that current,” “Set that phase,” “Try not to explode.”
+If you’ve ever worked with a real accelerator, you know the first
+thing you meet is not an elegant abstraction or a well-behaved 
+mathematical object.
+You meet **devices** — power converters that sulk when you push 
+them too fast, RF amplifiers that have opinions about stability, 
+diagnostics that only tell the truth when they feel like it.
+And if you’re coming from the MATLAB Middle Layer (MML), you’re 
+used to poking these devices directly: “Give me that current,” 
+“Set that phase,” “Try not to explode.”
 
 `accml-less` embraces this world — but gives it a good cleaning first.
 
-The Core Idea: A Friendly Device Layer
+## The Core Idea: A Friendly Device Layer
 
 The heart of accml-less is simple: 
 **it gives you device access that looks and feels like the real 

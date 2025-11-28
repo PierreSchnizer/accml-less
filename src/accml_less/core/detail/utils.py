@@ -2,6 +2,7 @@
 
 Todo:
     rework the whole factory
+    make it work independent of view
 
 """
 import itertools
@@ -21,7 +22,9 @@ from .combined_views_with_attributes import CombinedViewWithAttributes
 from .conversion_capsule import ConversionCapsule
 from .view import View
 from .view_with_attribute import ViewWithAttributesProxy
-from .view_with_simulator_backend import ViewWithSimulatorBackend
+from .view_with_backend import ViewRWithBackend, ViewRWWithBackend
+from .view_with_conversion import ViewRWWithConversion, ViewWithConversionConfiguration
+from ..interface.backend import BackendRW
 from ..interface.combined_views import (
     CombinedViews as CombinedViewsInterface,
     StandardViews,
@@ -102,7 +105,7 @@ def build_combined_view_for_device(
     device_name: str,
     lm: LiaisonManagerBase,
     ts: TranslatorServiceBase,
-    backend: AcceleratorSimulatorInterface,
+    backend: BackendRW,
 ) -> CombinedViewsInterface:
     """
 
@@ -139,7 +142,6 @@ def build_combined_view_for_device(
         return ConversionCapsule(
             conversion_id=conv_id, translation_object=ts.get(conv_id)
         )
-        return ts.get()
 
     # now we need to handle properly which interface the backend
     # expects ...
@@ -163,20 +165,27 @@ def build_combined_view_for_device(
     else:
         tos_bwd = None
 
+    cfg = ViewWithConversionConfiguration(
+        name=f"{device_name}-device-view",
+        native_view="device",
+        target_view="design",
+        properties=[
+            item.get_conversion_id().device_property_id.property for item in tos_bwd
+        ],
+    )
+
     return CombinedViews(
         name=f"{element_name}-combined-views",
         views={
-            StandardViews.design.value: ViewWithSimulatorBackend(
+            StandardViews.design.value: ViewRWWithBackend(
                 name=f"{element_name}-design-view",
-                element_name=element_name,
+                entity_name=element_name,
                 properties=elem_props,
-                conversion_capsules=None,
                 backend=backend,
+                backends_view="design",
             ),
-            StandardViews.device.value: ViewWithSimulatorBackend(
-                name=f"{device_name}-device-view",
-                element_name=element_name,
-                properties=list(tos_bwd),
+            StandardViews.device.value: ViewRWWithConversion(
+                config=cfg,
                 conversion_capsules=tos_bwd,
                 backend=backend,
             ),

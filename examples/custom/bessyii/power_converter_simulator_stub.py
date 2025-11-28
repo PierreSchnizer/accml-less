@@ -15,16 +15,20 @@ from accml_less.core.detail.utils import (
 from accml_less.custom.simulators.pyat.accelerator_simulator import (
     PyATAcceleratorSimulator,
 )
+from accml_less.custom.simulators.pyat.simulator_backend import SimulatorBackend
 
 logger = logging.getLogger("accml-less")
 
 
 async def main():
 
-    acc = PyATAcceleratorSimulator(
-        at_lattice=Accelerator(
-            file_name="bessyii_lattice_json.json", from_json=True
-        ).ring
+    acc = SimulatorBackend(
+        name="bessyii-pyat-simulator",
+        acc=PyATAcceleratorSimulator(
+            at_lattice=Accelerator(
+                file_name="bessyii_lattice_json.json", from_json=True
+            ).ring
+        ),
     )
 
     yp, lm, ts = load_managers()

@@ -16,3 +16,11 @@ class ConversionCapsule(ConversionCapsuleBase):
 
     def get_translation_object(self) -> StateConversion:
         return self.to
+
+    def __repr__(self) -> str:
+        return (
+            f"{self.__class__.__name__}("
+            "conversion_id={self.conv_id},"
+            " translation_object:{self.to}"
+            ")"
+        )

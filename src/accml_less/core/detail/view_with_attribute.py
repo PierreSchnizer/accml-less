@@ -57,4 +57,9 @@ class ViewWithAttributesProxy(ViewWithAttributesProxyInterface):
         return self.get_signal_proxy(item)
 
     def __repr__(self):
-        return f"{self.__class__.__name__}(name={self.get_name()}, properties={self._proxied_obj.get_properties()})"
+        return (
+            f"{self.__class__.__name__}("
+            "name={self.get_name()},"
+            " properties={self._proxied_obj.get_properties()}"
+            ")"
+        )

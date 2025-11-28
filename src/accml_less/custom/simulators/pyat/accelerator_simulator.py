@@ -30,6 +30,9 @@ class PyATAcceleratorSimulator(AcceleratorSimulatorInterface):
         """
         self.acc = at_lattice
 
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}(at_lattice={self.acc})"
+
     def get(self, element_id):
         """
         Retrieve an element proxy based on the given element ID.

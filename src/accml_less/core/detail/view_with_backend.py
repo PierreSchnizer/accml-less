@@ -1,9 +1,4 @@
-"""
-
-Todo:
-    Refactor intermixing translation and read / write
-
-    Provide a proxy or delegator for getting info doen
+"""Views directly directing request to back end
 """
 import logging
 from typing import Sequence
@@ -62,6 +57,7 @@ class ViewRWithBackend(ViewR):
             id_,
         )
 
+
 class ViewRWWithBackend(ViewRWithBackend, ViewRW):
     def __init__(
         self,
@@ -79,7 +75,7 @@ class ViewRWWithBackend(ViewRWithBackend, ViewRW):
             properties=properties,
             backend=backend,
             backends_view=backends_view,
-            logger=logger
+            logger=logger,
         )
         # for type check
         self.backend = backend

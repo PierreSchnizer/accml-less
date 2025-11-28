@@ -1,3 +1,9 @@
+"""
+
+Todo:
+    rework the whole factory
+
+"""
 import itertools
 from dataclasses import dataclass
 from typing import Sequence
@@ -5,17 +11,25 @@ from typing import Sequence
 from accml.core.interfaces.liaison_manager import LiaisonManagerBase
 from accml.core.interfaces.state_conversion import StateConversion
 from accml.core.interfaces.translator_service import TranslatorServiceBase
-from accml.core.model.identifiers import LatticeElementPropertyID, DevicePropertyID, ConversionID
+from accml.core.model.identifiers import (
+    LatticeElementPropertyID,
+    DevicePropertyID,
+    ConversionID,
+)
 from .combined_views import CombinedViews
 from .combined_views_with_attributes import CombinedViewWithAttributes
 from .conversion_capsule import ConversionCapsule
 from .view import View
 from .view_with_attribute import ViewWithAttributesProxy
 from .view_with_simulator_backend import ViewWithSimulatorBackend
-from ..interface.combined_views import CombinedViews as CombinedViewsInterface, StandardViews
+from ..interface.combined_views import (
+    CombinedViews as CombinedViewsInterface,
+    StandardViews,
+)
 from ..interface.conversion_capsule import ConversionCapsuleBase
-from ..interface.simulator_accelerator.accelerator_simulator import AcceleratorSimulatorInterface
-
+from ..interface.simulator_accelerator.accelerator_simulator import (
+    AcceleratorSimulatorInterface,
+)
 
 
 def add_proxies_to_combined_view(cv: CombinedViewsInterface) -> CombinedViewsInterface:
@@ -29,30 +43,38 @@ def add_proxies_to_combined_view(cv: CombinedViewsInterface) -> CombinedViewsInt
         )
     )
 
-def devices_corresponding_to_element(*, element_name: str, liaison_manager: LiaisonManagerBase) -> Sequence[str]:
-    """
-    """
+
+def devices_corresponding_to_element(
+    *, element_name: str, liaison_manager: LiaisonManagerBase
+) -> Sequence[str]:
+    """ """
     props = liaison_manager.get_element_properties(element_name)
     lp = [
-        LatticeElementPropertyID(element_name=element_name, property=p)
-        for p in props
+        LatticeElementPropertyID(element_name=element_name, property=p) for p in props
     ]
     return [liaison_manager.forward(id_).device_name for id_ in lp]
 
 
-def elements_corresponding_to_device(device_name: str, liaison_manager: LiaisonManagerBase) -> Sequence[str]:
-    return list(itertools.chain(*[
-        [
-            elem.element_name for elem in liaison_manager.inverse(
-            DevicePropertyID(device_name=device_name, property=p)
-            )
-        ]
-        for p in liaison_manager.get_device_properties(device_name)
-    ]))
+def elements_corresponding_to_device(
+    device_name: str, liaison_manager: LiaisonManagerBase
+) -> Sequence[str]:
+    return list(
+        itertools.chain(
+            *[
+                [
+                    elem.element_name
+                    for elem in liaison_manager.inverse(
+                        DevicePropertyID(device_name=device_name, property=p)
+                    )
+                ]
+                for p in liaison_manager.get_device_properties(device_name)
+            ]
+        )
+    )
 
 
 def build_combined_view_for_element(
-        *, element_name: str, lm: LiaisonManagerBase, ts: TranslatorServiceBase
+    *, element_name: str, lm: LiaisonManagerBase, ts: TranslatorServiceBase
 ) -> CombinedViewsInterface:
     props = lm.get_element_properties(element_name)
 
@@ -65,8 +87,7 @@ def build_combined_view_for_element(
         name=f"{element_name}-combined-views",
         views={
             StandardViews.design.value: View(
-                name=f"{element_name}-design-view",
-                properties=props
+                name=f"{element_name}-design-view", properties=props
             ),
             StandardViews.device.value: View(
                 name=f"{device_name}-device-view",
@@ -77,11 +98,11 @@ def build_combined_view_for_element(
 
 
 def build_combined_view_for_device(
-        *,
-        device_name: str,
-        lm: LiaisonManagerBase,
-        ts: TranslatorServiceBase,
-        backend: AcceleratorSimulatorInterface
+    *,
+    device_name: str,
+    lm: LiaisonManagerBase,
+    ts: TranslatorServiceBase,
+    backend: AcceleratorSimulatorInterface,
 ) -> CombinedViewsInterface:
     """
 
@@ -108,18 +129,15 @@ def build_combined_view_for_device(
         dev_id = lm.forward(elem_id)
         conv_id = ConversionID(lattice_property_id=elem_id, device_property_id=dev_id)
         return ConversionCapsule(
-            conversion_id=conv_id,
-            translation_object=ts.get(conv_id)
+            conversion_id=conv_id, translation_object=ts.get(conv_id)
         )
-
 
     def capsule_for_dev_prop(id_: str):
         dev_id = DevicePropertyID(device_name=device_name, property=id_)
-        elem_id, = lm.inverse(dev_id)
+        (elem_id,) = lm.inverse(dev_id)
         conv_id = ConversionID(lattice_property_id=elem_id, device_property_id=dev_id)
         return ConversionCapsule(
-            conversion_id=conv_id,
-            translation_object=ts.get(conv_id)
+            conversion_id=conv_id, translation_object=ts.get(conv_id)
         )
         return ts.get()
 
@@ -131,7 +149,9 @@ def build_combined_view_for_device(
 
     natural_view = StandardViews.design.value
 
-    assert natural_view == StandardViews.design.value, "Currently only implementing it for natural desgin view"
+    assert (
+        natural_view == StandardViews.design.value
+    ), "Currently only implementing it for natural desgin view"
 
     if natural_view != StandardViews.design.value:
         tos_fwd = [capsule_for_elem_prop(prop) for prop in elem_props]
@@ -151,14 +171,14 @@ def build_combined_view_for_device(
                 element_name=element_name,
                 properties=elem_props,
                 conversion_capsules=None,
-                backend=backend
+                backend=backend,
             ),
             StandardViews.device.value: ViewWithSimulatorBackend(
                 name=f"{device_name}-device-view",
                 element_name=element_name,
                 properties=list(tos_bwd),
                 conversion_capsules=tos_bwd,
-                backend=backend
+                backend=backend,
             ),
         },
     )

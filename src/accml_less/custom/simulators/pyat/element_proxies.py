@@ -3,7 +3,7 @@ from typing import Tuple
 import numpy as np
 from at import shift_elem
 
-from  accml_less.core.interface.simulator_accelerator.element import ElementInterface
+from accml_less.core.interface.simulator_accelerator.element import ElementInterface
 
 
 def estimate_shift(element, eps=1e-8):
@@ -202,9 +202,6 @@ class ElementProxy(ElementInterface):
             raise AssertionError(f"Did not expect kick {property_id}")
         return element.KickAngle[idx]
 
-
-
-
     def peek(self, property_id: str) -> float:
         if property_id in ["K", "H", "main_strength"]:
             return self.peek_main_strength(property_id)
@@ -322,7 +319,6 @@ class KickAngleCorrectorProxy(AddOnElementProxy):
             await self.update_kick(kick_x=value, element_data=element_data)
         elif self.correction_plane == "vertical":
             await self.update_kick(kick_y=value, element_data=element_data)
-
 
     def peek(self, property_id: str) -> float:
         element = self._obj

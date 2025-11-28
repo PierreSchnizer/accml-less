@@ -5,15 +5,17 @@ from accml.core.interfaces.translator_service import TranslatorServiceBase
 
 from .combined_views import CombinedViews
 from .utils import build_combined_view_for_device
-from ..interface.device_view_factory import DeviceViewFactory as DeviceViewFactoryInterface
+from ..interface.device_view_factory import (
+    DeviceViewFactory as DeviceViewFactoryInterface,
+)
 
 
 class DeviceViewFactory(DeviceViewFactoryInterface):
     def __init__(
-            self,
-            *,
-            liaison_manager: LiaisonManagerBase,
-            translator_service: TranslatorServiceBase
+        self,
+        *,
+        liaison_manager: LiaisonManagerBase,
+        translator_service: TranslatorServiceBase
     ):
         """
         Todo: should it contain a name
@@ -21,10 +23,12 @@ class DeviceViewFactory(DeviceViewFactoryInterface):
         self.lm = liaison_manager
         self.ts = translator_service
         #: todo: is a mapping enough ?
-        self.managed_devices: Dict[str, CombinedViews]  = dict()
+        self.managed_devices: Dict[str, CombinedViews] = dict()
 
     def create_managed_device(self, dev_name: str) -> CombinedViews:
-        return build_combined_view_for_device(device_name=dev_name, lm=self.lm, ts=self.ts)
+        return build_combined_view_for_device(
+            device_name=dev_name, lm=self.lm, ts=self.ts
+        )
 
     def get(self, dev_name: str) -> CombinedViews:
         """
@@ -35,9 +39,8 @@ class DeviceViewFactory(DeviceViewFactoryInterface):
         if cv:
             return cv
         cv = self.create_managed_device(dev_name)
-        self.managed_devices.update({dev_name : cv})
+        self.managed_devices.update({dev_name: cv})
         return cv
 
     def get_managed_device_names(self) -> Sequence[str]:
         return tuple(self.managed_devices)
-

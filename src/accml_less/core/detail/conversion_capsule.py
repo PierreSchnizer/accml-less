@@ -3,8 +3,11 @@ from accml.core.model.identifiers import ConversionID
 
 from ..interface.conversion_capsule import ConversionCapsuleBase
 
+
 class ConversionCapsule(ConversionCapsuleBase):
-    def __init__(self, *, conversion_id: ConversionID, translation_object: StateConversion):
+    def __init__(
+        self, *, conversion_id: ConversionID, translation_object: StateConversion
+    ):
         self.conv_id = conversion_id
         self.to = translation_object
 
@@ -13,4 +16,3 @@ class ConversionCapsule(ConversionCapsuleBase):
 
     def get_translation_object(self) -> StateConversion:
         return self.to
-

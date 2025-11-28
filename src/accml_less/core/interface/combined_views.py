@@ -17,8 +17,11 @@ class CombinedViews(metaclass=ABCMeta):
         reduce the number of types get returns or
         make it more Liskov like
     """
+
     @abstractmethod
-    def get(self, view: str) -> Union[ViewR, ViewRW, DeviceViewRFacadeBase, DeviceViewRWFacadeBase]:
+    def get(
+        self, view: str
+    ) -> Union[ViewR, ViewRW, DeviceViewRFacadeBase, DeviceViewRWFacadeBase]:
         """get a view.
 
         Todo:

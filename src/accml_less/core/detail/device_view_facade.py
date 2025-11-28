@@ -8,14 +8,16 @@ from ..interface.view import ViewRW, ViewR
 class DeviceViewRFacade(DeviceViewRFacadeBase):
     """
 
+    Todo:
+        Does one need to make clear what is read and what is writable
     """
 
     def __init__(
-            self,
-            *,
-            name: str,
-            destination_switching_object: DestinationMultiplexer,
-            delegates: Mapping[str, Union[ViewR]]
+        self,
+        *,
+        name: str,
+        destination_switching_object: DestinationMultiplexer,
+        delegates: Mapping[str, Union[ViewR, ViewRW]]
     ):
         self.name = name
         self.dst_switch = destination_switching_object
@@ -42,16 +44,16 @@ class DeviceViewRFacade(DeviceViewRFacadeBase):
 
 class DeviceViewRWFacade(DeviceViewRFacade, DeviceViewRWFacadeBase):
     def __init__(
-            self,
-            *,
-            name: str,
-            destination_switching_object: DestinationMultiplexer,
-            delegates: Mapping[str, Union[ViewRW]]
+        self,
+        *,
+        name: str,
+        destination_switching_object: DestinationMultiplexer,
+        delegates: Mapping[str, Union[ViewRW]]
     ):
         super().__init__(
             name=name,
             destination_switching_object=destination_switching_object,
-            delegates=None
+            delegates=None,
         )
         self.name = name
         self.dst_switch = destination_switching_object

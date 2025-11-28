@@ -2,18 +2,20 @@
 
 Todo:
     Refactor intermixing translation and read / write
+
+    Provide a proxy or delegator for getting info doen
 """
 import logging
 from typing import Sequence
 
 from .conversion_capsule_utils import get_conversion_capsule_for_device_property
 from ..interface.conversion_capsule import ConversionCapsuleBase
-from ..interface.simulator_accelerator.accelerator_simulator import AcceleratorSimulatorInterface
+from ..interface.simulator_accelerator.accelerator_simulator import (
+    AcceleratorSimulatorInterface,
+)
 from ..interface.view import ViewR as ViewInterface
 
 logger = logging.getLogger("accml")
-
-
 
 
 class ViewWithSimulatorBackend(ViewInterface):
@@ -26,16 +28,17 @@ class ViewWithSimulatorBackend(ViewInterface):
         consider if then directly the element should be
         passed and not the accelerator object
     """
+
     def __init__(
         self,
         *,
-        name:str,
-        element_name:str,
+        name: str,
+        element_name: str,
         properties: Sequence[str],
         backend: AcceleratorSimulatorInterface,
         backends_view: str = "design",
         conversion_capsules: Sequence[ConversionCapsuleBase],
-        logger = logger
+        logger=logger,
     ):
         self._name = name
         self.element_name = element_name
@@ -52,8 +55,7 @@ class ViewWithSimulatorBackend(ViewInterface):
         return f"{self.__class__.__name__}(name={self._name}, properties={self._properties})"
 
     def get_properties(self) -> Sequence[str]:
-        return  self._properties
-
+        return self._properties
 
     def _get_conversion_capsule(self, id_: str) -> ConversionCapsuleBase:
         """
@@ -69,7 +71,9 @@ class ViewWithSimulatorBackend(ViewInterface):
             raise AssertionError(f"I expected to find a capsule for {id_}")
 
         elem_name = capsule.get_conversion_id().lattice_property_id.element_name
-        assert elem_name == self.element_name, f"Conversion working on elem {elem_name}, but I am only handling {self.element_name}"
+        assert (
+            elem_name == self.element_name
+        ), f"Conversion working on elem {elem_name}, but I am only handling {self.element_name}"
 
         return capsule
 
@@ -90,8 +94,12 @@ class ViewWithSimulatorBackend(ViewInterface):
         return res
 
     async def trigger(self, id_: str):
-        logger.info("%s(name=%s).trigger(%s): no action implemented",
-                    self.__class__.__name__, self.get_name(), id_)
+        logger.info(
+            "%s(name=%s).trigger(%s): no action implemented",
+            self.__class__.__name__,
+            self.get_name(),
+            id_,
+        )
 
     async def set(self, id_: str, value: object) -> None:
         elem_name = self.element_name

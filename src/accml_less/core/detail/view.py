@@ -1,10 +1,15 @@
 from typing import Sequence
 
-from ..interface.view import ViewR as ViewInterface
+from ..interface.view import ViewR as ViewRInterface
+from ..interface.view import ViewRW as ViewRWInterface
 
 
-class View(ViewInterface):
+class View(ViewRWInterface):
+    """
 
+    Todo:
+        split up if it is read only or readwrite
+    """
     def __init__(self, name: str, properties: Sequence[str]):
         self._name = name
         self._properties = properties
@@ -16,7 +21,7 @@ class View(ViewInterface):
         return f"{self.__class__.__name__}(name={self._name}, properties={self._properties})"
 
     def get_properties(self) -> Sequence[str]:
-        return  self._properties
+        return self._properties
 
     def read(self, id_: str) -> object:
         raise NotImplementedError("need to delegate to mexec")

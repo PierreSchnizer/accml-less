@@ -5,7 +5,7 @@ from ..interface.view import ViewR
 
 
 class CombinedViewWithAttributes(CombinedViews):
-    def __init__(self, *, proxied_object: CombinedViews, name: Union[str, None]=None):
+    def __init__(self, *, proxied_object: CombinedViews, name: Union[str, None] = None):
         self.proxied_object = proxied_object
         self.name = name
 

@@ -13,9 +13,7 @@ class ViewWithAttributesProxy(ViewR, metaclass=ABCMeta):
 
     @abstractmethod
     def get_signal_proxy(self, id_: str) -> Union[SignalProxyR, SignalProxyRW]:
-        """
-
-        """
+        """ """
 
     @abstractmethod
     def __dir__(self) -> Sequence[str]:

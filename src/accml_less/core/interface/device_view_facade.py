@@ -18,11 +18,10 @@ class _DeviceViewFacadeSwitch(metaclass=ABCMeta):
             add type of switching object
         """
 
+
 class DeviceViewRFacadeBase(ViewR, _DeviceViewFacadeSwitch, metaclass=ABCMeta):
-    """A common interface for wherever the information goes
-    """
+    """A common interface for wherever the information goes"""
+
 
 class DeviceViewRWFacadeBase(ViewRW, _DeviceViewFacadeSwitch, metaclass=ABCMeta):
-    """A common interface for wherever the information goes
-    """
-
+    """A common interface for wherever the information goes"""

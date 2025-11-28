@@ -5,9 +5,7 @@ from accml_less.core.interface.view import ViewR
 
 
 def get_conversion_capsule_for_device_property(
-        *,
-        capsules: Sequence[ConversionCapsuleBase],
-        device_property: str
+    *, capsules: Sequence[ConversionCapsuleBase], device_property: str
 ) -> Union[ConversionCapsuleBase, None]:
     for capsule in capsules:
         #: todo yet an other check for the device name

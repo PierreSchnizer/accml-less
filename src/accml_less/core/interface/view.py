@@ -19,6 +19,7 @@ class ViewR(metaclass=ABCMeta):
     Todo:
         improve type annotation
     """
+
     @abstractmethod
     def get_name(self) -> str:
         raise NotImplementedError
@@ -31,7 +32,6 @@ class ViewR(metaclass=ABCMeta):
             Should it be renamed to id?
         """
         raise NotImplementedError("use derived class instead")
-
 
     @abstractmethod
     async def trigger(self, id_: str):
@@ -53,9 +53,9 @@ class ViewR(metaclass=ABCMeta):
 
     @abstractmethod
     async def read(self, id_: str) -> object:
-        """get the value associated with a certain property
-        """
+        """get the value associated with a certain property"""
         raise NotImplementedError("use derived class instead")
+
 
 class ViewRW(metaclass=ABCMeta):
     @abstractmethod

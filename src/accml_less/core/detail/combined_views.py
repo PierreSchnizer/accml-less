@@ -1,11 +1,11 @@
-from typing import Dict, Sequence
+from typing import Dict, Sequence, Union
 
 from ..interface.combined_views import CombinedViews as CombinedViewsInterface
-from ..interface.view import ViewR
+from ..interface.view import ViewR, ViewRW
 
 
 class CombinedViews(CombinedViewsInterface):
-    def __init__(self, *, name: str, views: Dict[str, ViewR]):
+    def __init__(self, *, name: str, views: Dict[str, Union[ViewR, ViewRW]]):
         self.name = name
         self.views = views
 
@@ -19,5 +19,5 @@ class CombinedViews(CombinedViewsInterface):
         return tuple(self.views.keys())
 
     def __repr__(self):
-        d = {key: item  for key, item in self.views.items()}
+        d = {key: item for key, item in self.views.items()}
         return f"{self.__class__.__name__}(name={self.name}, views={d})"

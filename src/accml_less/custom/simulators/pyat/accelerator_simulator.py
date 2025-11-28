@@ -1,5 +1,7 @@
 from .element_proxies import ElementProxy, KickAngleCorrectorProxy
-from accml_less.core.interface.simulator_accelerator.accelerator_simulator import AcceleratorSimulatorInterface
+from accml_less.core.interface.simulator_accelerator.accelerator_simulator import (
+    AcceleratorSimulatorInterface,
+)
 
 
 class PyATAcceleratorSimulator(AcceleratorSimulatorInterface):
@@ -101,8 +103,13 @@ class PyATAcceleratorSimulator(AcceleratorSimulatorInterface):
         if not host_element_id.startswith("S"):
             raise ValueError(f"Unsupported host element ID: {host_element_id}")
 
-        correction_plane = "horizontal" if element_id.startswith("H") else "vertical" if element_id.startswith(
-            "V") else None
+        correction_plane = (
+            "horizontal"
+            if element_id.startswith("H")
+            else "vertical"
+            if element_id.startswith("V")
+            else None
+        )
 
         if correction_plane is None:
             raise ValueError(f"Unknown correction plane for element ID: {element_id}")

@@ -11,6 +11,7 @@ class SignalProxyR(SignalProxyRInterface):
 
     a much ado about closures
     """
+
     def __init__(self, *, proxied_object: ViewR, name: Union[str, None], id_: str):
         self.name = name
         self.proxied_object = proxied_object
@@ -22,7 +23,7 @@ class SignalProxyR(SignalProxyRInterface):
     async def read(self) -> object:
         return await self.proxied_object.read(self.id_)
 
-class SignalProxyRW(SignalProxyR, SignalProxyRWInterface):
 
+class SignalProxyRW(SignalProxyR, SignalProxyRWInterface):
     async def set(self, value: object):
         return await self.proxied_object.set(self.id_, value)

@@ -1,4 +1,115 @@
-# Flaws of the `accml-less` design
+# accml-less limitations
+
+
+##  1. A Tale of Two Workshops
+
+accml is built around the idea of *handing a recipe to a very 
+competent craft-person*.\
+You write a clean list of steps; the execution engine carries\
+them out.
+Everything is tidy, deterministic, and reproducible.
+
+`accml-less` is different.\
+It puts you in front of the bench.\
+You pick up the tools yourself — or worse, reach around the 
+craft-person and try to move their hands.
+
+Sure, it works.\
+But it’s easy to get your fingers caught.
+
+## 2. Why This Causes Trouble
+
+Because accml-less behaves like direct device access, it must 
+solve several problems at once:
+
+### 2.1 One device, many realities
+
+A “Quadrupole” in AT isn’t the same kind of creature as a quadrupole
+power converter in the real machine. One object may map to several 
+simulation elements, or vice versa.
+
+
+### 2.2 Switching destinations on the fly
+
+Users expect the same device object to behave the same way whether
+it talks to:
+
+* a simulation engine,
+* a digital twin,
+* the real machine.
+
+That means every device has to check a multiplexer on each call 
+and figure out where reality currently resides.
+
+
+### 2.3 Explaining what will happen
+
+If changing one device property actually writes numbers into several
+simulation elements, the user should be able to inspect that.\
+That’s harder than it sounds.
+
+That is why `accml`, which uses explicit messages and clear 
+separation, avoids these troubles entirely.
+
+
+### 3. Why the Implementation Looks Complicated
+
+To make the device illusion work, `accml-less` uses four layers:
+
+1. *Combined View* — the dual device/beam-dynamics interface
+2. *View Facade* — bundles view implementations and routes calls
+3. *View Implementation* — does backend-specific work
+4. *Backend Proxy* — ensures a uniform API for all backends
+
+This may look like overkill, but each layer solves a distinct problem.\
+Skip one, and you get spaghetti.
+
+## 4. What Could Be Improved
+### 4.1 Clearer vocabulary
+
+“Device” and “design” views are generic terms. A more destinct 
+name would be:
+
+* **Device view**
+* **Beam Dynamics view**
+
+Likewise, renaming *target/native* to *source/target* might match 
+normal engineering terminology better.
+
+
+## 5. What Cannot Be Improved
+
+Some limitations are baked into the concept:
+
+* **Destination switching has unavoidable side effects**\
+  If one object talks to multiple worlds, its behavior will depend  
+  on which world is active.\
+  This is the price of convenience.
+* **The four-layer implementation is necessary**\
+  Removing layers merges responsibilities and makes everything
+  fragile.
+
+You *could* collapse things by skipping the backend proxy and 
+letting view implementations talk directly to a backend.\
+But you’d be breaking the clean separation of concerns — and 
+inviting chaos.
+
+
+## End Note
+
+`accml-less` is not meant to be perfect.\
+It’s meant to be *useful* — a friendly workbench where accelerator 
+physicists can experiment freely, while still standing close enough
+to the `accml` model that they can graduate to the real thing when
+ready.
+
+`accml` is the production interface.\
+`accml-less` is the apprenticeship bench.
+
+Both are necessary — as long as you don’t try to use a hammer on 
+the RF amplifier.
+
+# Flaws of the `accml-less` design (zero's version)
 
 `accml` is designed around the flow of messages: 
 These are  commands which come from the user side and get executed

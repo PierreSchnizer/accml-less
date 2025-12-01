@@ -25,7 +25,7 @@ solve several problems at once:
 ### 2.1 One device, many realities
 
 A “Quadrupole” in AT isn’t the same kind of creature as a quadrupole
-power converter in the real machine. One object may map to several 
+power converter in the real machine. One object - for example the master clock - may map to several 
 simulation elements, or vice versa.
 
 
@@ -56,13 +56,16 @@ separation, avoids these troubles entirely.
 
 To make the device illusion work, `accml-less` uses four layers:
 
-1. *Combined View* — the dual device/beam-dynamics interface
+1. *Combined View* — the dual device/design (beam-dynamics) interface
 2. *View Facade* — bundles view implementations and routes calls
-3. *View Implementation* — does backend-specific work
+3. *View Implementation* — prepares data for the backend with 
+   an as slim access to the underlaying implementation as possible
 4. *Backend Proxy* — ensures a uniform API for all backends
 
 This may look like overkill, but each layer solves a distinct problem.\
 Skip one, and you get spaghetti.
+
+
 
 ## 4. What Could Be Improved
 ### 4.1 Clearer vocabulary

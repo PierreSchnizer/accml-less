@@ -6,8 +6,8 @@ Todo:
 """
 from abc import abstractmethod, ABCMeta
 
-from accml_less.core.interface.destination_multiplexer import DestinationMultiplexer
-from accml_less.core.interface.view import ViewR, ViewRW
+from .destination_multiplexer import DestinationMultiplexer
+from .view import ViewR, ViewRW
 
 
 class _DeviceViewFacadeSwitch(metaclass=ABCMeta):

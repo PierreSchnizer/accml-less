@@ -1,17 +1,16 @@
-"""Probe backend: similar to view, but addressing can change
+"""Probe backend: similar to view, but addressed entity can change
 
 It needs rather to address the whole accelerator
+
 Why: there is not always a direct mapping from one
      entity in the "design" view to the "device" view
 """
 from abc import ABCMeta, abstractmethod
-from typing import Sequence
+
 
 
 class BackendR(metaclass=ABCMeta):
     """
-    Todo:
-        should it contain a trigger method?
     """
 
     @abstractmethod

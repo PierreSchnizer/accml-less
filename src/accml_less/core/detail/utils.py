@@ -10,7 +10,6 @@ from dataclasses import dataclass
 from typing import Sequence
 
 from accml.core.interfaces.liaison_manager import LiaisonManagerBase
-from accml.core.interfaces.state_conversion import StateConversion
 from accml.core.interfaces.translator_service import TranslatorServiceBase
 from accml.core.model.identifiers import (
     LatticeElementPropertyID,
@@ -30,9 +29,6 @@ from ..interface.combined_views import (
     StandardViews,
 )
 from ..interface.conversion_capsule import ConversionCapsuleBase
-from ..interface.simulator_accelerator.accelerator_simulator import (
-    AcceleratorSimulatorInterface,
-)
 
 
 def add_proxies_to_combined_view(cv: CombinedViewsInterface) -> CombinedViewsInterface:

@@ -1,0 +1,26 @@
+[build-system]
+requires = [ "poetry-core>=1.0.0",]
+build-backend = "poetry.core.masonry.api"
+
+[project]
+name = "accml-less"
+version = "0.0.0a1"
+description = "a perhaps too rich interface to the python accelerator middle layer"
+authors = [
+     {name = "Waheedullah Sulaiman Khail", email = "<waheedullah.sulaiman_khail@helmholtz-berlin.de"},
+     {name = "Pierre Schnizer", email = "<pierre.schnizer@helmholtz-berlin.de"},
+]
+license = "GPL-3.0"
+# until we have the repoitory
+homepage = "https://github.com/hzb_ps/accml-less"
+documentation = "https://github.com/hzb_ps/accml-less"
+repository = "https://github.com/hzb_ps/accml-less.git"
+keywords = []
+
+[tool.poetry]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.7"
+accml = ">=0.2.0a1"
+lat2db = "*"

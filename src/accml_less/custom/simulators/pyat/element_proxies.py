@@ -3,7 +3,7 @@ from typing import Tuple
 import numpy as np
 from at import shift_elem
 
-from accml_less.core.interface.simulator_accelerator.element import ElementInterface
+from ..interface.element import ElementInterface
 
 
 def estimate_shift(element, eps=1e-8):

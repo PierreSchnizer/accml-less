@@ -1,7 +1,7 @@
 from abc import ABCMeta, abstractmethod
 
 
-class DestinationMultiplexer(metaclass=ABCMeta):
+class DestinationMultiplexerBase(metaclass=ABCMeta):
     """Allows setting to which destination the data should go"""
 
     @abstractmethod

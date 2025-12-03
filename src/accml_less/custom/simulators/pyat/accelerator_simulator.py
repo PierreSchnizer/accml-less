@@ -1,7 +1,5 @@
 from .element_proxies import ElementProxy, KickAngleCorrectorProxy
-from accml_less.core.interface.simulator_accelerator.accelerator_simulator import (
-    AcceleratorSimulatorInterface,
-)
+from ..interface.accelerator_simulator import AcceleratorSimulatorInterface
 
 
 class PyATAcceleratorSimulator(AcceleratorSimulatorInterface):

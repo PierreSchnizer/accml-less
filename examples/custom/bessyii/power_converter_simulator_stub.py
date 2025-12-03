@@ -12,6 +12,7 @@ from accml_less.core.detail.utils import (
     devices_corresponding_to_element,
     build_combined_view_for_device,
 )
+from accml_less.core.detail.destination_multiplexer import DestinationMultiplexer
 from accml_less.custom.simulators.pyat.accelerator_simulator import (
     PyATAcceleratorSimulator,
 )
@@ -34,7 +35,14 @@ async def main():
     yp, lm, ts = load_managers()
     quadrupole_names = yp.get("quadrupoles")
 
-    dvf = DeviceViewFactory(liaison_manager=lm, translator_service=ts)
+    multiplexer = DestinationMultiplexer(target_names=["simulator"])
+    dvf = DeviceViewFactory(
+        views=["design"],
+        multiplexer=multiplexer,
+        backends=dict(simulator=acc),
+        liaison_manager=lm,
+        translator_service=ts,
+    )
 
     # I deliberately work only with power converters for now
     # here I find out which they are
@@ -49,7 +57,10 @@ async def main():
         )
     )
     # select one for test
-    dev_name = dev_names[-2]
+    dev_name = dev_names[-1]
+    print(f"{dev_name=}")
+    cv = dvf.get(dev_name)
+
     cv = build_combined_view_for_device(device_name=dev_name, lm=lm, ts=ts, backend=acc)
     if cv is None:
         logger.error(f"Could not build a view for device {dev_name}")

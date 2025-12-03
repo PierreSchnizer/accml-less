@@ -1,16 +1,13 @@
 from typing import Sequence, Union
 
-from ...errors import AttributeUnknownToProxiedObject
-from ..interface.signal import SignalProxyR as SignalProxyRInterface
-from ..interface.signal import SignalProxyRW as SignalProxyRWInterface
-from ..interface.view_with_attributes import (
-    ViewWithAttributesProxy as ViewWithAttributesProxyInterface,
-)
-from ..interface.view import ViewR
-from .signal_proxy import SignalProxyR, SignalProxyRW
+from accml_less.errors import AttributeUnknownToProxiedObject
+from .signal_proxy import SignalProxyRW
+from ..interface.signal import SignalProxyRBase, SignalProxyRWBase
+from ..interface.view_with_attributes import ViewWithAttributesProxyBase
+from accml_less.core.interface.view import ViewR
 
 
-class ViewWithAttributesProxy(ViewWithAttributesProxyInterface):
+class ViewWithAttributesProxy(ViewWithAttributesProxyBase):
     def __init__(self, *, proxid_object: ViewR, name: Union[str, None] = None):
         self._proxied_obj = proxid_object
         self._name = name
@@ -34,7 +31,7 @@ class ViewWithAttributesProxy(ViewWithAttributesProxyInterface):
 
     def get_signal_proxy(
         self, id_: str
-    ) -> Union[SignalProxyRInterface, SignalProxyRWInterface]:
+    ) -> Union[SignalProxyRBase, SignalProxyRWBase]:
         """
         Todo:
             how can I find out if this object is read only or read write
@@ -51,7 +48,7 @@ class ViewWithAttributesProxy(ViewWithAttributesProxyInterface):
         Todo:
             do I need to add other names
         """
-        return self._proxied_obj.get_properties()
+        return self._proxied_obj.get_properties() + super().__dir__()
 
     def __getattr__(self, item):
         return self.get_signal_proxy(item)
@@ -59,7 +56,7 @@ class ViewWithAttributesProxy(ViewWithAttributesProxyInterface):
     def __repr__(self):
         return (
             f"{self.__class__.__name__}("
-            "name={self.get_name()},"
-            " properties={self._proxied_obj.get_properties()}"
+            f"name={self.get_name()},"
+            f" properties={self._proxied_obj.get_properties()}"
             ")"
         )

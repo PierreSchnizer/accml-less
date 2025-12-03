@@ -1,7 +1,7 @@
 from abc import ABCMeta, abstractmethod
 
 
-class SignalProxyR(metaclass=ABCMeta):
+class SignalProxyRBase(metaclass=ABCMeta):
     """ """
 
     @abstractmethod
@@ -24,7 +24,7 @@ class SignalProxyR(metaclass=ABCMeta):
         raise NotImplementedError("use derived class instead")
 
 
-class SignalProxyRW(SignalProxyR, metaclass=ABCMeta):
+class SignalProxyRWBase(SignalProxyRBase, metaclass=ABCMeta):
     @abstractmethod
     async def set(self, value: object):
         """Similar to ophyd async read

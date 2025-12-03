@@ -1,18 +1,18 @@
 from abc import ABCMeta, abstractmethod
 from typing import Sequence, Union
 
-from .signal import SignalProxyR, SignalProxyRW
-from .view import ViewR
+from accml_less.core.interface.view import ViewR
+from .signal import SignalProxyRBase, SignalProxyRWBase
 
 
-class ViewWithAttributesProxy(ViewR, metaclass=ABCMeta):
+class ViewWithAttributesProxyBase(ViewR, metaclass=ABCMeta):
     """
     Todo:
         should it be rather a protocil
     """
 
     @abstractmethod
-    def get_signal_proxy(self, id_: str) -> Union[SignalProxyR, SignalProxyRW]:
+    def get_signal_proxy(self, id_: str) -> Union[SignalProxyRBase, SignalProxyRWBase]:
         """ """
 
     @abstractmethod
@@ -23,7 +23,7 @@ class ViewWithAttributesProxy(ViewR, metaclass=ABCMeta):
         """
 
     @abstractmethod
-    def __getattr__(self, item) -> Union[SignalProxyR, SignalProxyRW]:
+    def __getattr__(self, item) -> Union[SignalProxyRBase, SignalProxyRWBase]:
         """
         Todo:
             appropriate to provide this interface?

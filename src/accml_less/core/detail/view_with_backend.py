@@ -27,14 +27,12 @@ class ViewRWithBackend(ViewR):
         entity_name: str,
         properties: Sequence[str],
         backend: BackendR,
-        backends_view: str,
         logger=logger,
     ):
         self._name = name
         self.entity_name = entity_name
         self._properties = properties
         self.backend = backend
-        self.backends_view = backends_view
         self.logger = logger
 
     def get_name(self) -> str:
@@ -66,7 +64,6 @@ class ViewRWWithBackend(ViewRWithBackend, ViewRW):
         entity_name: str,
         properties: Sequence[str],
         backend: BackendRW,
-        backends_view: str,
         logger=logger,
     ):
         super().__init__(
@@ -74,7 +71,6 @@ class ViewRWWithBackend(ViewRWithBackend, ViewRW):
             entity_name=entity_name,
             properties=properties,
             backend=backend,
-            backends_view=backends_view,
             logger=logger,
         )
         # for type check

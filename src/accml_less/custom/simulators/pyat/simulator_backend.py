@@ -1,9 +1,7 @@
 import logging
 
 from accml_less.core.interface.backend import BackendRW
-from accml_less.core.interface.simulator_accelerator.accelerator_simulator import (
-    AcceleratorSimulatorInterface,
-)
+from ..interface.accelerator_simulator import AcceleratorSimulatorInterface
 
 logger = logging.getLogger()
 
@@ -13,6 +11,9 @@ class SimulatorBackend(BackendRW):
         self.acc = acc
         self.logger = logger
         self.name = name
+
+    def get_natural_view_name(self):
+        return "design"
 
     def trigger(self, dev_id: str, prop_id: str):
         self.logger.info(

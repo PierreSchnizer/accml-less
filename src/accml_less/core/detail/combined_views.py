@@ -1,6 +1,6 @@
 from typing import Dict, Sequence, Union
 
-from ..interface.combined_views import CombinedViews as CombinedViewsInterface
+from ..interface.combined_views import CombinedViewsBase as CombinedViewsInterface
 from ..interface.view import ViewR, ViewRW
 
 

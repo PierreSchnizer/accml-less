@@ -6,8 +6,7 @@ Todo:
 
 """
 import itertools
-from dataclasses import dataclass
-from typing import Sequence
+from typing import Sequence, Union, Mapping
 
 from accml.core.interfaces.liaison_manager import LiaisonManagerBase
 from accml.core.interfaces.translator_service import TranslatorServiceBase
@@ -17,30 +16,19 @@ from accml.core.model.identifiers import (
     ConversionID,
 )
 from .combined_views import CombinedViews
-from .combined_views_with_attributes import CombinedViewWithAttributes
 from .conversion_capsule import ConversionCapsule
+from .device_view_facade import DeviceViewRWFacade
 from .view import View
-from .view_with_attribute import ViewWithAttributesProxy
-from .view_with_backend import ViewRWithBackend, ViewRWWithBackend
+from .view_with_backend import ViewRWWithBackend
 from .view_with_conversion import ViewRWWithConversion, ViewWithConversionConfiguration
 from ..interface.backend import BackendRW
 from ..interface.combined_views import (
-    CombinedViews as CombinedViewsInterface,
+    CombinedViewsBase as CombinedViewsInterface,
     StandardViews,
 )
 from ..interface.conversion_capsule import ConversionCapsuleBase
-
-
-def add_proxies_to_combined_view(cv: CombinedViewsInterface) -> CombinedViewsInterface:
-    return CombinedViewWithAttributes(
-        proxied_object=CombinedViews(
-            name=f"{cv.get_name()}-attr-proxy",
-            views={
-                view.value: ViewWithAttributesProxy(proxid_object=cv.get(view.value))
-                for view in StandardViews
-            },
-        )
-    )
+from ..interface.destination_multiplexer import DestinationMultiplexerBase
+from ..interface.view import ViewRW
 
 
 def devices_corresponding_to_element(
@@ -108,7 +96,6 @@ def build_combined_view_for_device(
     Todo:
         should it return None on failure or raise an exception ?
     """
-    props = lm.get_device_properties(device_name)
 
     # only prepared to handle a single device
     element_names = set(
@@ -178,7 +165,6 @@ def build_combined_view_for_device(
                 entity_name=element_name,
                 properties=elem_props,
                 backend=backend,
-                backends_view="design",
             ),
             StandardViews.device.value: ViewRWWithConversion(
                 config=cfg,
@@ -187,3 +173,194 @@ def build_combined_view_for_device(
             ),
         },
     )
+
+
+def create_combined_view(
+    *,
+    entity_name: str,
+    views: Sequence[str],
+    multiplexer: DestinationMultiplexerBase,
+    backends: Mapping[str, BackendRW],
+    liaison_manager: LiaisonManagerBase,
+    translator_service: TranslatorServiceBase,
+) -> CombinedViews:
+
+    return CombinedViews(
+        name=f"{entity_name}-combined-view",
+        views={
+            view: create_facade_view(
+                entity_name=entity_name,
+                source_view=view,
+                backends=backends,
+                multiplexer=multiplexer,
+                liaison_manager=liaison_manager,
+                translator_service=translator_service
+            )
+            for view in views
+        },
+    )
+
+
+def create_facade_view(
+    *,
+    entity_name: str,
+    source_view: str,
+    backends: Mapping[str, BackendRW],
+    multiplexer: DestinationMultiplexerBase,
+    liaison_manager: LiaisonManagerBase,
+    translator_service: TranslatorServiceBase
+)-> DeviceViewRWFacade:
+
+    delegates = {
+        name: build_view_for_backend_for_entity(
+            entity_name=entity_name,
+            source_view=source_view,
+            backend=backend,
+            lm=liaison_manager,
+            ts=translator_service,
+        )
+        for name, backend in backends.items()
+    }
+
+    return DeviceViewRWFacade(
+        name=f"{entity_name}-facade",
+        destination_switching_object=multiplexer,
+        delegates=delegates,
+    )
+
+def build_view_for_backend_for_entity(
+    *,
+    entity_name: str,
+    source_view: str,
+    backend: BackendRW,
+    lm: LiaisonManagerBase,
+    ts: TranslatorServiceBase,
+):
+    if source_view == backend.get_natural_view_name():
+        if source_view == "design":
+            props = lm.get_element_properties(entity_name)
+        elif source_view == "device":
+            props = lm.get_device_properties(entity_name)
+        else:
+            raise AssertionError(f"Not prepared to handle view {source_view}")
+        return _build_view_with_backend_for_entity(
+            entity_name=entity_name,
+            source_view=source_view,
+            entity_props=props,
+            backend=backend
+        )
+
+    return _build_view_with_backend_for_entity_with_conversion(
+        entity_name=entity_name,
+        source_view=source_view,
+        backend=backend,
+        lm=lm,
+        ts=ts
+    )
+
+def _build_view_with_backend_for_entity(
+    *,
+    entity_name: str,
+    source_view: str,
+    entity_props: Sequence[str],
+    backend: BackendRW,
+) -> ViewRW:
+    assert source_view == backend.get_natural_view_name()
+    return ViewRWWithBackend(
+        name=f"{entity_name}-{source_view}-view",
+        entity_name=entity_name,
+        properties=entity_props,
+        backend=backend,
+    )
+
+
+def _build_view_with_backend_for_entity_with_conversion(
+    *,
+    entity_name: str,
+    source_view: str,
+    backend: BackendRW,
+    lm: LiaisonManagerBase,
+    ts: TranslatorServiceBase,
+)-> Union[ViewRW, None]:
+    """
+
+    I only need conversion as this view is not in the backend's view
+    """
+
+    assert source_view != backend.get_natural_view_name(),\
+        f"Why did I end up here given that {source_view} == {backend.get_natural_view_name()}"
+
+
+    if backend.get_natural_view_name() == "device":
+        # Need to convert to device from what ever view is requested
+        assert source_view == "design", "Expected that I convert from design to device view"
+        element_name = entity_name
+        device_names = set(
+            devices_corresponding_to_element(
+                element_name=element_name, liaison_manager=lm
+            )
+        )
+        if len(device_names) != 1:
+            return None
+        (device_name,) = device_names
+        props = lm.get_element_properties(element_name)
+        tos = [capsule_for_elem_prop(element_name=element_name, property=prop, lm=lm, ts=ts) for prop in props]
+
+    elif backend.get_natural_view_name() == "design":
+        assert source_view == "device", "Expected that I convert from to device to design view"
+        # only prepared to handle a single device
+        device_name = entity_name
+        element_names = set(
+            elements_corresponding_to_device(
+                device_name=device_name, liaison_manager=lm
+            )
+        )
+        if len(element_names) != 1:
+            return None
+
+        (element_name,) = element_names
+        props = lm.get_device_properties(device_name)
+        tos = [capsule_for_dev_prop(device_name=device_name, property=prop, lm=lm, ts=ts) for prop in props]
+
+    else:
+        raise AssertionError(f"Don't know how to handle natural {backend.get_natural_view_name()}")
+
+    # now we know that properties exist ... now check that they have corresponding ones
+    cfg = ViewWithConversionConfiguration(
+        name=f"{entity_name}-conf-{source_view}-{backend.get_natural_view_name()}-view",
+        native_view=source_view,
+        target_view=backend.get_natural_view_name(),
+        properties=props,
+    )
+
+    return ViewRWWithConversion(
+        config=cfg,
+        conversion_capsules=tos,
+        backend=backend,
+    )
+
+
+def capsule_for_elem_prop(
+    *,
+    element_name: str,
+    property: str,
+    lm: LiaisonManagerBase,
+    ts: TranslatorServiceBase,
+) -> ConversionCapsuleBase:
+    elem_id = LatticeElementPropertyID(element_name=element_name, property=property)
+    dev_id = lm.forward(elem_id)
+    conv_id = ConversionID(lattice_property_id=elem_id, device_property_id=dev_id)
+    return ConversionCapsule(conversion_id=conv_id, translation_object=ts.get(conv_id))
+
+
+def capsule_for_dev_prop(
+    *,
+    device_name: str,
+    property: str,
+    lm: LiaisonManagerBase,
+    ts: TranslatorServiceBase,
+) -> ConversionCapsuleBase:
+    dev_id = DevicePropertyID(device_name=device_name, property=property)
+    (elem_id,) = lm.inverse(dev_id)
+    conv_id = ConversionID(lattice_property_id=elem_id, device_property_id=dev_id)
+    return ConversionCapsule(conversion_id=conv_id, translation_object=ts.get(conv_id))

@@ -14,6 +14,10 @@ class BackendR(metaclass=ABCMeta):
     """
 
     @abstractmethod
+    def get_natural_view_name(self):
+        raise NotImplementedError("use base class instead")
+
+    @abstractmethod
     async def trigger(self, dev_id: str, prop_id: str):
         raise NotImplementedError("use base class instead")
 

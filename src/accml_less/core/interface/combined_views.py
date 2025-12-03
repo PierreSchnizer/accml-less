@@ -11,7 +11,7 @@ class StandardViews(Enum):
     device = "device"
 
 
-class CombinedViews(metaclass=ABCMeta):
+class CombinedViewsBase(metaclass=ABCMeta):
     """
     Todo:
         reduce the number of types get returns or

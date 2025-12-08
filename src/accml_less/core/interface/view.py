@@ -57,7 +57,7 @@ class ViewR(metaclass=ABCMeta):
         raise NotImplementedError("use derived class instead")
 
 
-class ViewRW(metaclass=ABCMeta):
+class ViewRW(ViewR, metaclass=ABCMeta):
     @abstractmethod
     async def set(self, id_: str, value: object) -> None:
         """set the value of the property

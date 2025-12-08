@@ -1,31 +1,27 @@
 from abc import ABCMeta, abstractmethod
 from typing import Sequence, Union
 
-from accml_less.core.interface.view import ViewR
+from accml_less.core.interface.view import ViewR, ViewRW
 from .signal import SignalProxyRBase, SignalProxyRWBase
 
 
-class ViewWithAttributesProxyBase(ViewR, metaclass=ABCMeta):
+class ViewRWithAttributesProxyBase(ViewR, metaclass=ABCMeta):
     """
     Todo:
         should it be rather a protocil
     """
 
     @abstractmethod
-    def get_signal_proxy(self, id_: str) -> Union[SignalProxyRBase, SignalProxyRWBase]:
+    def get_signal_proxy(self, id_: str) -> SignalProxyRBase:
         """ """
 
-    @abstractmethod
-    def __dir__(self) -> Sequence[str]:
-        """
-        Todo:
-            appropriate to provide this interface?
-        """
+
+class ViewRWWithAttributesProxyBase(ViewRW, metaclass=ABCMeta):
+    """
+    Todo:
+        should it be rather a protocil
+    """
 
     @abstractmethod
-    def __getattr__(self, item) -> Union[SignalProxyRBase, SignalProxyRWBase]:
-        """
-        Todo:
-            appropriate to provide this interface?
-        """
-        raise NotImplementedError("use derived class instead")
+    def get_signal_proxy(self, id_: str) -> SignalProxyRWBase:
+        """ """

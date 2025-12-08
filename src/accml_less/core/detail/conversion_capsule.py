@@ -20,7 +20,7 @@ class ConversionCapsule(ConversionCapsuleBase):
     def __repr__(self) -> str:
         return (
             f"{self.__class__.__name__}("
-            "conversion_id={self.conv_id},"
-            " translation_object:{self.to}"
+            f"conversion_id={self.conv_id},"
+            f" translation_object:{self.to}"
             ")"
         )

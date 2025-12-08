@@ -4,16 +4,13 @@ from accml.core.interfaces.liaison_manager import LiaisonManagerBase
 from accml.core.interfaces.translator_service import TranslatorServiceBase
 
 from .combined_views import CombinedViews
-from .device_view_facade import DeviceViewRWFacade
-from .utils import build_combined_view_for_device, build_view_for_backend_for_entity, create_combined_view
+from .utils import create_combined_view
 from ..interface.backend import BackendRW
 from ..interface.destination_multiplexer import DestinationMultiplexerBase
-from ..interface.device_view_factory import (
-    DeviceViewFactory as DeviceViewFactoryInterface,
-)
+from ..interface.device_view_factory import DeviceViewFactoryBase
 
 
-class DeviceViewFactory(DeviceViewFactoryInterface):
+class DeviceViewFactory(DeviceViewFactoryBase):
     def __init__(
         self,
         *,
@@ -47,7 +44,7 @@ class DeviceViewFactory(DeviceViewFactoryInterface):
             multiplexer=self.multiplexer,
             backends=self.backends,
             liaison_manager=self.liaison_manager,
-            translator_service=self.translator_service
+            translator_service=self.translator_service,
         )
 
     def get(self, dev_name: str) -> CombinedViews:
@@ -66,7 +63,25 @@ class DeviceViewFactory(DeviceViewFactoryInterface):
         return tuple(self.managed_devices)
 
     def get_known_device_names(self) -> Sequence[str]:
-        """
-        """
-        raise NotImplementedError("Should it be implemented?")
+        """ """
+        return self.liaison_manager.get_device_ids()
 
+    def __str__(self):
+        return (
+            f"{self.__class__.__name__}("
+            f"view={self.views}"
+            f", multiplexer={self.multiplexer}"
+            f", backends={self.backends}"
+            ")"
+        )
+
+    def __repr__(self):
+        return (
+            f"{self.__class__.__name__}("
+            f"view={self.views}"
+            f", backends={self.backends}"
+            f", multiplexer={self.multiplexer}"
+            f", liaison_manager={self.liaison_manager}"
+            f", translator services = {self.translator_service}"
+            ")"
+        )

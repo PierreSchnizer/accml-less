@@ -3,12 +3,12 @@ from typing import Sequence, Union
 from accml_less.errors import AttributeUnknownToProxiedObject
 from .signal_proxy import SignalProxyRW
 from ..interface.signal import SignalProxyRBase, SignalProxyRWBase
-from ..interface.view_with_attributes import ViewWithAttributesProxyBase
-from accml_less.core.interface.view import ViewR
+from ..interface.view_with_attributes import ViewRWWithAttributesProxyBase
+from accml_less.core.interface.view import ViewRW
 
 
-class ViewWithAttributesProxy(ViewWithAttributesProxyBase):
-    def __init__(self, *, proxid_object: ViewR, name: Union[str, None] = None):
+class ViewWithAttributesProxy(ViewRWWithAttributesProxyBase):
+    def __init__(self, *, proxid_object: ViewRW, name: Union[str, None] = None):
         self._proxied_obj = proxid_object
         self._name = name
 
@@ -29,9 +29,7 @@ class ViewWithAttributesProxy(ViewWithAttributesProxyBase):
     async def set(self, id_: str, value: object) -> None:
         return await self._proxied_obj.set(id_, value)
 
-    def get_signal_proxy(
-        self, id_: str
-    ) -> Union[SignalProxyRBase, SignalProxyRWBase]:
+    def get_signal_proxy(self, id_: str) -> Union[SignalProxyRBase, SignalProxyRWBase]:
         """
         Todo:
             how can I find out if this object is read only or read write
